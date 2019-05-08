@@ -1,0 +1,47 @@
+.container {
+  width: 33%;
+  float: left;
+}
+ul {
+  padding-left: 10px;
+  margin: 0 5px;
+  list-style: none;
+}
+.flex-wrapper {
+  display: flex;
+  flex-direction: row;
+}
+.hidden {
+  display: none;
+}
+#requestList {
+  list-style-type: decimal;
+}
+#requestList li {
+  cursor: pointer;
+  padding: 5px;
+  border-radius: 3px;
+}
+#requestList li:nth-child(even) {
+  background-color: #e6e6e6;
+}
+
+ul#requestList li.active {
+  background-color: #3333eb;
+  color: white;
+}
+ul#requestList li:hover {
+  background-color: aliceblue;
+  color: inherit;
+}
+
+.CodeMirror {
+  height: 100%;
+  font-size: 12px;
+}
+#query span {
+  white-space: pre;
+}
+#clearRequestList {
+  margin-right: 50px;
+}

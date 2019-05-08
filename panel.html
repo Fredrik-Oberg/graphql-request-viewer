@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<head>
+  <link rel="stylesheet" href="./lib/codemirror.css" />
+  <link rel="stylesheet" href="./lib/fold/foldgutter.css" />
+  <link rel="stylesheet" href="styles.css" />
+  <script src="./lib/codemirror.js"></script>
+  <script src="./lib/fold/foldcode.js"></script>
+  <script src="./lib/fold/foldgutter.js"></script>
+  <script src="./lib/fold/brace-fold.js"></script>
+  <script src="./lib/fold/xml-fold.js"></script>
+  <script src="./lib/fold/indent-fold.js"></script>
+  <script src="./lib/fold/markdown-fold.js"></script>
+  <script src="./lib/fold/comment-fold.js"></script>
+  <script src="./lib/mode/javascript.js"></script>
+</head>
+<html>
+  <body>
+    <div class="flex-wrapper">
+      <div class="container">
+        <div>
+          <button id="clearRequestList">clear</button>
+          <b>GraphQL Requests</b>
+        </div>
+
+        <ul id="requestList"></ul>
+      </div>
+      <div class="container">
+        <b>Variables</b>
+        <div class="variable-wrapper">
+          <div id="variables"></div>
+        </div>
+        <hr />
+        <div class="query-wrapper">
+          <b>Query</b>
+          <div id="query"></div>
+        </div>
+      </div>
+      <div class="container">
+        <div class="response-wrapper">
+          <b>Response Data</b>
+          <div id="response"></div>
+        </div>
+      </div>
+    </div>
+
+    <script src="network-listener.js"></script>
+  </body>
+</html>
