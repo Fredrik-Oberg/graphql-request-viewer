@@ -90,13 +90,16 @@ function setDataInDetailsView(query, variables, response) {
 }
 
 function createNetworkListener() {
-  chrome.devtools.network.onRequestFinished.addListener(request => {
-    request.getContent(body => {
-      if (request.request && request.request.url) {
-        if (request.request.url.includes("graphql") && request.request.method === "POST") {
-          const operationName = request.request.postData.params.find(x => x.name === "operationName");
-          const query = request.request.postData.params.find(x => x.name === "query");
-          const variables = request.request.postData.params.find(x => x.name === "variables");
+  chrome.devtools.network.onRequestFinished.addListener(event => {
+    event.getContent(body => {
+      if (event.request && event.request.url) {
+        if (event.request.url.includes("graphql") && event.request.method === "POST") {
+          if (event.request.postData.params == null) {
+            return;
+          }
+          const operationName = event.request.postData.params.find(x => x.name === "operationName");
+          const query = event.request.postData.params.find(x => x.name === "query");
+          const variables = event.request.postData.params.find(x => x.name === "variables");
           const liEl = document.createElement("li");
           liEl.onclick = function(e) {
             setDataInDetailsView(query.value, variables.value, body);
