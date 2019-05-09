@@ -44,10 +44,44 @@ let queryCodeMirror = {};
   document.getElementById("clearRequestList").addEventListener(
     "click",
     () => {
-      document.querySelector("#requestList").innerHTML = "";
+      document.getElementById("requestList").innerHTML = "";
     },
     false
   );
+  document.getElementById("requestContainer").addEventListener("keydown", function(event) {
+    event.preventDefault();
+    const clickFirst = () => {
+      const allReq = document.querySelectorAll("#requestList li");
+      if (allReq.length > 0) {
+        allReq[0].click();
+      }
+    };
+    const clickLast = () => {
+      const allReq = document.querySelectorAll("#requestList li");
+      if (allReq.length > 0) {
+        allReq[allReq.length - 1].click();
+      }
+    };
+    const activeRequest = document.querySelector("#requestList li.active");
+    //keydown
+    if (event.keyCode === 40) {
+      if (activeRequest == null) {
+        clickFirst();
+      } else {
+        const next = activeRequest.nextSibling;
+        next ? next.click() : clickFirst();
+      }
+    }
+    //keyup
+    if (event.keyCode === 38) {
+      if (activeRequest == null) {
+        clickFirst();
+      } else {
+        const prev = activeRequest.previousSibling;
+        prev ? prev.click() : clickLast();
+      }
+    }
+  });
 })();
 function setDataInDetailsView(query, variables, response) {
   queryCodeMirror.setValue(query);

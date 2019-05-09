@@ -27,7 +27,7 @@ ul {
 }
 
 ul#requestList li.active {
-  background-color: #3333eb;
+  background-color: #3333eb !important;
   color: white;
 }
 ul#requestList li:hover {
@@ -44,4 +44,7 @@ ul#requestList li:hover {
 }
 #clearRequestList {
   margin-right: 50px;
+}
+#requestContainer:focus {
+  outline: none;
 }
