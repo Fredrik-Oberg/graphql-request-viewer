@@ -1,6 +1,5 @@
 .container {
-  width: 33%;
-  float: left;
+  width: 40%;
 }
 ul {
   padding-left: 10px;
@@ -13,6 +12,15 @@ ul {
 }
 .hidden {
   display: none;
+}
+.container-header {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 5px;
+}
+.options-button {
+  margin-right: 10px;
+  margin-left: auto;
 }
 #requestList {
   list-style-type: decimal;
@@ -42,9 +50,10 @@ ul#requestList li:hover {
 #query span {
   white-space: pre;
 }
-#clearRequestList {
-  margin-right: 50px;
+
+#requestListContainer {
+  width: 20%;
 }
-#requestContainer:focus {
+#requestListContainer:focus {
   outline: none;
 }

@@ -18,28 +18,39 @@
 <html>
   <body>
     <div class="flex-wrapper">
-      <div class="container" id="requestContainer" tabindex="0">
-        <div>
-          <button id="clearRequestList">clear</button>
+      <div class="container" id="requestListContainer" tabindex="0">
+        <div class="container-header">
           <b>GraphQL Requests</b>
+          <button id="clearRequestList" class="options-button">clear</button>
         </div>
 
         <ul id="requestList"></ul>
       </div>
       <div class="container">
-        <b>Variables</b>
+        <div class="container-header">
+          <b>Variables</b>
+          <button id="" class="options-button">copy</button>
+        </div>
         <div class="variable-wrapper">
           <div id="variables"></div>
         </div>
+
         <hr />
-        <div class="query-wrapper">
+        <div class="container-header">
           <b>Query</b>
+          <button id="" class="options-button">copy</button>
+        </div>
+        <div class="query-wrapper">
           <div id="query"></div>
         </div>
       </div>
       <div class="container">
-        <div class="response-wrapper">
+        <div class="container-header">
           <b>Response Data</b>
+          <button id="" class="options-button">copy</button>
+        </div>
+
+        <div class="response-wrapper">
           <div id="response"></div>
         </div>
       </div>

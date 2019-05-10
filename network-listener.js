@@ -48,7 +48,7 @@ let queryCodeMirror = {};
     },
     false
   );
-  document.getElementById("requestContainer").addEventListener("keydown", function(event) {
+  document.getElementById("requestListContainer").addEventListener("keydown", function(event) {
     event.preventDefault();
     const clickFirst = () => {
       const allReq = document.querySelectorAll("#requestList li");
