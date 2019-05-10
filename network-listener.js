@@ -42,7 +42,6 @@ const copyToClipboard = str => {
   });
 
   document.addEventListener("click", function(e) {
-    console.log(e);
     if (
       e.target &&
       e.target.parentElement &&
