@@ -1,6 +1,20 @@
 let variablesCodeMirror = {};
 let responseCodeMirror = {};
 let queryCodeMirror = {};
+
+// https://gist.github.com/Chalarangelo/99e7cbee0de3c94f0077bb7555110767#file-copytoclipboard-js
+const copyToClipboard = str => {
+  const el = document.createElement("textarea");
+  el.value = str;
+  el.setAttribute("readonly", "");
+  el.style.position = "absolute";
+  el.style.left = "-9999px";
+  document.body.appendChild(el);
+  el.select();
+  document.execCommand("copy");
+  document.body.removeChild(el);
+};
+
 (function() {
   createNetworkListener();
   responseCodeMirror = CodeMirror(document.getElementById("response"), {
@@ -28,6 +42,7 @@ let queryCodeMirror = {};
   });
 
   document.addEventListener("click", function(e) {
+    console.log(e);
     if (
       e.target &&
       e.target.parentElement &&
@@ -39,6 +54,25 @@ let queryCodeMirror = {};
         li.classList.remove("active");
       });
       e.target.classList.add("active");
+    } else if (e.target && e.target.classList.contains("options-button")) {
+      const copyFrom = e.target.dataset.copy;
+      let codeText = "";
+      switch (copyFrom) {
+        case "variables":
+          codeText = variablesCodeMirror.doc.getValue();
+          break;
+        case "query":
+          codeText = queryCodeMirror.doc.getValue();
+          break;
+        case "response":
+          codeText = responseCodeMirror.doc.getValue();
+          break;
+        default:
+          break;
+      }
+      if (codeText !== "") {
+        copyToClipboard(codeText);
+      }
     }
   });
   document.getElementById("clearRequestList").addEventListener(
