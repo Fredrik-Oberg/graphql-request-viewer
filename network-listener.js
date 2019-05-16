@@ -78,6 +78,9 @@ const copyToClipboard = str => {
     "click",
     () => {
       document.getElementById("requestList").innerHTML = "";
+      queryCodeMirror.setValue('');
+      responseCodeMirror.setValue('');
+      variablesCodeMirror.setValue('');
     },
     false
   );
