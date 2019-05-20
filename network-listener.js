@@ -58,7 +58,19 @@ const copyToClipboard = str => {
       let codeText = "";
       switch (copyFrom) {
         case "variables":
-          codeText = variablesCodeMirror.doc.getValue();
+          // We transform the variables to a key:value format
+          const variablesText = variablesCodeMirror.doc.getValue();
+          try {
+            const raw = JSON.parse(variablesText);
+            const mapped = Object.entries(raw).reduce((acc, [key, val]) => {
+              acc[key] = val.value;
+              return acc;
+            }, {});
+
+            codeText = JSON.stringify(mapped, null, 2);
+          } catch (ex) {
+            codeText = variablesCodeMirror.doc.getValue();
+          }
           break;
         case "query":
           codeText = queryCodeMirror.doc.getValue();
@@ -78,9 +90,9 @@ const copyToClipboard = str => {
     "click",
     () => {
       document.getElementById("requestList").innerHTML = "";
-      queryCodeMirror.setValue('');
-      responseCodeMirror.setValue('');
-      variablesCodeMirror.setValue('');
+      queryCodeMirror.setValue("");
+      responseCodeMirror.setValue("");
+      variablesCodeMirror.setValue("");
     },
     false
   );
