@@ -69,6 +69,7 @@ const searchKibana = async transactionId => {
       return hits.filter(hit => hit._source.transactionId === transactionId)
     })
   }
+  document.querySelector("#traceList").innerHTML = ''
   const savedUrls = localStorage.getItem(KEY_URLS)
   const searchUrls = savedUrls != null ? savedUrls.split(',').filter(url => url.includes('http')) : []
   const hits = await Promise.all(searchUrls.map(url => search(url)))
