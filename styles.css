@@ -1,48 +1,43 @@
-.container {
-  width: 40%;
-}
-ul {
-  padding-left: 10px;
-  margin: 0 5px;
-  list-style: none;
-}
-.flex-wrapper {
-  display: flex;
-  flex-direction: row;
-}
-.hidden {
-  display: none;
-}
-.container-header {
-  display: flex;
-  justify-content: space-around;
-  margin-bottom: 5px;
-}
-.options-button {
-  margin-right: 10px;
-  margin-left: auto;
-}
-#requestList {
-  list-style-type: decimal;
-}
-#requestList li {
-  cursor: pointer;
+a.list-group-item {
   padding: 5px;
-  border-radius: 3px;
 }
-#requestList li:nth-child(even) {
-  background-color: #e6e6e6;
+.common-header {
+  margin: 10px 5px;
 }
-
-ul#requestList li.active {
-  background-color: #3333eb !important;
-  color: white;
+.common-header:before,
+.common-header:after {
+  display: table;
+  content: " ";
 }
-ul#requestList li:hover {
-  background-color: aliceblue;
-  color: inherit;
+.common-header:after {
+  clear: both;
 }
-
+.fl {
+  float: left;
+}
+.fr {
+  float: right;
+}
+.full-width {
+  width: 100%;
+}
+.mt-5 {
+  margin-top: 5px;
+}
+.nav-pills {
+  padding: 5px 0;
+}
+.nav-pills > li.active > a,
+.nav-pills > li.active > a:focus,
+.nav-pills > li.active > a:hover {
+  background-color: rgb(153, 69, 0);
+}
+.nav > li > a {
+  padding: 5px 10px;
+}
+.list-group {
+  overflow: hidden;
+}
 .CodeMirror {
   height: 100%;
   font-size: 12px;
@@ -51,9 +46,12 @@ ul#requestList li:hover {
   white-space: pre;
 }
 
-#requestListContainer {
-  width: 20%;
-}
 #requestListContainer:focus {
   outline: none;
+}
+#transactionId {
+  font-size: 11px;
+}
+ul {
+  padding-left: 0;
 }

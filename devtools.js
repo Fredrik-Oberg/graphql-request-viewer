@@ -1,1 +1,4 @@
-chrome.devtools.panels.create("Graphql request viewer", null, "panel.html");
+if (chrome) {
+  browser = chrome;
+}
+browser.devtools.panels.create("Graphql request viewer", "", "panel.html");
