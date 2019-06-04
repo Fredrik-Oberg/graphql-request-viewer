@@ -84,8 +84,10 @@ const searchKibana = async transactionId => {
       anchorEl.href = "#";
       anchorEl.onclick = function (e) {
         e.preventDefault();
-        const parsed = JSON.parse(source[Object.keys(source).find(key => key.includes('msg'))])
-        traceSourceCodeMirror.setValue(JSON.stringify(parsed, null, 2));
+        const jsonMessage = Object.keys(source).find(key => key.includes('msg'))
+        let message = jsonMessage ? { ...source, message: JSON.parse(source[jsonMessage]) } : source
+
+        traceSourceCodeMirror.setValue(JSON.stringify(message, null, 2));
         document.querySelector("#transactionTimestamp").innerHTML = source['@timestamp']
       };
       const applicationNameTextNode = document.createTextNode(applicationName);
@@ -272,21 +274,30 @@ function createNetworkListener() {
     event.getContent(body => {
       if (event.request && event.request.url) {
         if (event.request.url.includes("graphql") && event.request.method === "POST") {
+          let operationName, query, variables
           if (event.request.postData.params == null || event.request.postData.params.length === 0) {
-            return;
+            // Firefox does not parse the multipart body like chrome, need to do it manually
+            const rawData = event.request.postData.text.split(event.request.postData.mimeType.split('boundary=')[1])
+            operationName = rawData[1].replace('Content-Disposition: form-data; name=\"operationName\"', '').replace('--', '').trim()
+            query = rawData[2].replace('Content-Disposition: form-data; name=\"query\"', '').replace('--', '').trim()
+            variables = rawData[3].replace('Content-Disposition: form-data; name=\"variables\"', '').replace('--', '').trim()
+            if (operationName == null) {
+              return;
+            }
+          } else {
+            operationName = event.request.postData.params.find(x => x.name === "operationName").value;
+            query = event.request.postData.params.find(x => x.name === "query").value;
+            variables = event.request.postData.params.find(x => x.name === "variables").value;
           }
-          const operationName = event.request.postData.params.find(x => x.name === "operationName");
-          const query = event.request.postData.params.find(x => x.name === "query");
-          const variables = event.request.postData.params.find(x => x.name === "variables");
 
           const anchorEl = document.createElement("a");
           anchorEl.classList.add("list-group-item");
           anchorEl.href = "#";
           anchorEl.onclick = function (e) {
             e.preventDefault();
-            setDataInDetailsView(query.value, variables.value, body);
+            setDataInDetailsView(query, variables, body);
           };
-          const operationNameValue = document.createTextNode(operationName.value);
+          const operationNameValue = document.createTextNode(operationName);
           anchorEl.appendChild(operationNameValue);
           document.querySelector("#requestList").prepend(anchorEl);
 
