@@ -1,7 +1,7 @@
 if (chrome) {
   browser = chrome;
 }
-const KEY_URLS = 'grapql_request_viewer_urls'
+const KEY_URLS = "grapql_request_viewer_urls";
 let variablesCodeMirror = {};
 let responseCodeMirror = {};
 let queryCodeMirror = {};
@@ -21,59 +21,61 @@ const copyToClipboard = str => {
   document.body.removeChild(el);
 };
 const renderUrlList = () => {
-  const urls = localStorage.getItem(KEY_URLS)
-  if (urls == null) return
+  const urls = localStorage.getItem(KEY_URLS);
+  if (urls == null) return;
 
-  document.getElementById("savedUrlsList").innerHTML = ''
-  urls.split(',').forEach(url => {
+  document.getElementById("savedUrlsList").innerHTML = "";
+  urls.split(",").forEach(url => {
     const liEl = document.createElement("li");
     liEl.classList.add("list-group-item");
 
     const urlTextNode = document.createTextNode(url);
     liEl.appendChild(urlTextNode);
     document.getElementById("savedUrlsList").prepend(liEl);
-  })
-}
+  });
+};
 const searchKibana = async transactionId => {
-  const search = async (url) => {
-    return await fetch(
-      url,
-      {
-        method: "POST",
-        body: JSON.stringify({
-          query: {
-            bool: {
-              must: {
-                match: {
-                  transactionId: transactionId,
-                }
-              },
-              filter: {
-                range: {
-                  "@timestamp": {
-                    gte: "now-12h",
-                    lte: "now"
-                  }
+  const search = async url => {
+    return await fetch(url, {
+      method: "POST",
+      body: JSON.stringify({
+        query: {
+          bool: {
+            must: {
+              match: {
+                transactionId: transactionId
+              }
+            },
+            filter: {
+              range: {
+                "@timestamp": {
+                  gte: "now-12h",
+                  lte: "now"
                 }
               }
             }
           }
-        }),
-        headers: {
-          "Content-Type": "application/json"
         }
+      }),
+      headers: {
+        "Content-Type": "application/json"
       }
-    ).then(async response => {
-      const res = await response.json()
-      const hits = res.hits ? res.hits.hits : []
-      return hits.filter(hit => hit._source.transactionId === transactionId)
     })
-  }
-  document.querySelector("#traceList").innerHTML = ''
-  const savedUrls = localStorage.getItem(KEY_URLS)
-  const searchUrls = savedUrls != null ? savedUrls.split(',').filter(url => url.includes('http')) : []
-  const hits = await Promise.all(searchUrls.map(url => search(url)))
-  hits
+      .then(async response => {
+        const res = await response.json();
+        const hits = res.hits ? res.hits.hits : [];
+        return hits.filter(hit => hit._source.transactionId === transactionId);
+      })
+      .catch(async error => {
+        console.log(error);
+      });
+  };
+  document.querySelector("#traceList").innerHTML = "";
+  const savedUrls = localStorage.getItem(KEY_URLS);
+  const searchUrls = savedUrls != null ? savedUrls.split(",").filter(url => url.includes("http")) : [];
+  const hits = await Promise.all(searchUrls.map(url => search(url)));
+  const filteredHits = hits.filter(x => Boolean(x) && x.length);
+  filteredHits
     .flat()
     .sort((a, b) => (a._source["@timestamp"] > b._source["@timestamp"] ? 1 : -1))
     .forEach(hit => {
@@ -82,21 +84,21 @@ const searchKibana = async transactionId => {
       const anchorEl = document.createElement("a");
       anchorEl.classList.add("list-group-item");
       anchorEl.href = "#";
-      anchorEl.onclick = function (e) {
+      anchorEl.onclick = function(e) {
         e.preventDefault();
-        const jsonMessage = Object.keys(source).find(key => key.includes('msg'))
-        let message = jsonMessage ? { ...source, message: JSON.parse(source[jsonMessage]) } : source
+        const jsonMessage = Object.keys(source).find(key => key.includes("msg"));
+        let message = jsonMessage ? { ...source, message: JSON.parse(source[jsonMessage]) } : source;
 
         traceSourceCodeMirror.setValue(JSON.stringify(message, null, 2));
-        document.querySelector("#transactionTimestamp").innerHTML = source['@timestamp']
+        document.querySelector("#transactionTimestamp").innerHTML = source["@timestamp"];
       };
       const applicationNameTextNode = document.createTextNode(applicationName);
       anchorEl.appendChild(applicationNameTextNode);
       document.querySelector("#traceList").prepend(anchorEl);
       console.log(hit._source);
     });
-}
-(function () {
+};
+(function() {
   createNetworkListener();
   responseCodeMirror = CodeMirror(document.getElementById("response"), {
     mode: "javascript",
@@ -129,7 +131,7 @@ const searchKibana = async transactionId => {
     foldGutter: true,
     gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
   });
-  document.addEventListener("click", function (e) {
+  document.addEventListener("click", function(e) {
     if (e.target && e.target.parentElement && e.target.parentElement.id === "requestList" && e.target.tagName === "A") {
       const requestList = document.querySelectorAll("#requestList a");
       requestList.forEach(anchor => {
@@ -169,15 +171,15 @@ const searchKibana = async transactionId => {
       }
     }
   });
-  $('a[data-toggle="tab"]').on("shown.bs.tab", async function (e) {
+  $('a[data-toggle="tab"]').on("shown.bs.tab", async function(e) {
     // refresh b/c hidden codeMirrors is not updating until invoked
     variablesCodeMirror.refresh();
     responseCodeMirror.refresh();
     queryCodeMirror.refresh();
     traceSourceCodeMirror.refresh();
-    document.querySelector("#transactionTimestamp").innerHTML = ""
-    if (e.target.id === 'navSettings') {
-      renderUrlList()
+    document.querySelector("#transactionTimestamp").innerHTML = "";
+    if (e.target.id === "navSettings") {
+      renderUrlList();
     }
 
     if (e.target.id !== "navTrace") {
@@ -189,27 +191,27 @@ const searchKibana = async transactionId => {
     const reqList = document.querySelector("#requestList");
     const currentReqIndex = Array.from(reqList.children).indexOf(document.querySelector("#requestList a.active"));
     const transactionId = [...traceList].reverse()[currentReqIndex];
-    if (transactionId == null) return
+    if (transactionId == null) return;
 
-    document.querySelector("#transactionId").value = transactionId
-    await searchKibana(transactionId)
+    document.querySelector("#transactionId").value = transactionId;
+    await searchKibana(transactionId);
   });
   document.getElementById("btnAddUrl").addEventListener(
     "click",
     async () => {
-      const savedUrls = localStorage.getItem(KEY_URLS)
-      const url = document.getElementById("searchUrlsInput").value
-      const urls = savedUrls != null ? `${savedUrls},${url}` : url
-      localStorage.setItem(KEY_URLS, urls)
+      const savedUrls = localStorage.getItem(KEY_URLS);
+      const url = document.getElementById("searchUrlsInput").value;
+      const urls = savedUrls != null ? `${savedUrls},${url}` : url;
+      localStorage.setItem(KEY_URLS, urls);
 
-      renderUrlList()
+      renderUrlList();
     },
     false
   );
   document.getElementById("btnSearch").addEventListener(
     "click",
     async () => {
-      await searchKibana(document.getElementById("transactionId").value)
+      await searchKibana(document.getElementById("transactionId").value);
     },
     false
   );
@@ -226,7 +228,7 @@ const searchKibana = async transactionId => {
     },
     false
   );
-  document.getElementById("requestListContainer").addEventListener("keydown", function (event) {
+  document.getElementById("requestListContainer").addEventListener("keydown", function(event) {
     event.preventDefault();
     const clickFirst = () => {
       const allReq = document.querySelectorAll("#requestList li");
@@ -274,13 +276,22 @@ function createNetworkListener() {
     event.getContent(body => {
       if (event.request && event.request.url) {
         if (event.request.url.includes("graphql") && event.request.method === "POST") {
-          let operationName, query, variables
+          let operationName, query, variables;
           if (event.request.postData.params == null || event.request.postData.params.length === 0) {
             // Firefox does not parse the multipart body like chrome, need to do it manually
-            const rawData = event.request.postData.text.split(event.request.postData.mimeType.split('boundary=')[1])
-            operationName = rawData[1].replace('Content-Disposition: form-data; name=\"operationName\"', '').replace('--', '').trim()
-            query = rawData[2].replace('Content-Disposition: form-data; name=\"query\"', '').replace('--', '').trim()
-            variables = rawData[3].replace('Content-Disposition: form-data; name=\"variables\"', '').replace('--', '').trim()
+            const rawData = event.request.postData.text.split(event.request.postData.mimeType.split("boundary=")[1]);
+            operationName = rawData[1]
+              .replace('Content-Disposition: form-data; name="operationName"', "")
+              .replace("--", "")
+              .trim();
+            query = rawData[2]
+              .replace('Content-Disposition: form-data; name="query"', "")
+              .replace("--", "")
+              .trim();
+            variables = rawData[3]
+              .replace('Content-Disposition: form-data; name="variables"', "")
+              .replace("--", "")
+              .trim();
             if (operationName == null) {
               return;
             }
@@ -293,7 +304,7 @@ function createNetworkListener() {
           const anchorEl = document.createElement("a");
           anchorEl.classList.add("list-group-item");
           anchorEl.href = "#";
-          anchorEl.onclick = function (e) {
+          anchorEl.onclick = function(e) {
             e.preventDefault();
             setDataInDetailsView(query, variables, body);
           };
