@@ -9,7 +9,7 @@ let traceSourceCodeMirror = {};
 let traceList = [];
 
 // https://gist.github.com/Chalarangelo/99e7cbee0de3c94f0077bb7555110767#file-copytoclipboard-js
-const copyToClipboard = str => {
+const copyToClipboard = (str) => {
   const el = document.createElement("textarea");
   el.value = str;
   el.setAttribute("readonly", "");
@@ -25,7 +25,7 @@ const renderUrlList = () => {
   if (urls == null) return;
 
   document.getElementById("savedUrlsList").innerHTML = "";
-  urls.split(",").forEach(url => {
+  urls.split(",").forEach((url) => {
     const liEl = document.createElement("li");
     liEl.classList.add("list-group-item");
 
@@ -34,8 +34,8 @@ const renderUrlList = () => {
     document.getElementById("savedUrlsList").prepend(liEl);
   });
 };
-const searchKibana = async transactionId => {
-  const search = async url => {
+const searchKibana = async (transactionId) => {
+  const search = async (url) => {
     return await fetch(url, {
       method: "POST",
       body: JSON.stringify({
@@ -43,50 +43,50 @@ const searchKibana = async transactionId => {
           bool: {
             must: {
               match: {
-                transactionId: transactionId
-              }
+                transactionId: transactionId,
+              },
             },
             filter: {
               range: {
                 "@timestamp": {
                   gte: "now-12h",
-                  lte: "now"
-                }
-              }
-            }
-          }
-        }
+                  lte: "now",
+                },
+              },
+            },
+          },
+        },
       }),
       headers: {
-        "Content-Type": "application/json"
-      }
+        "Content-Type": "application/json",
+      },
     })
-      .then(async response => {
+      .then(async (response) => {
         const res = await response.json();
         const hits = res.hits ? res.hits.hits : [];
-        return hits.filter(hit => hit._source.transactionId === transactionId);
+        return hits.filter((hit) => hit._source.transactionId === transactionId);
       })
-      .catch(async error => {
+      .catch(async (error) => {
         console.log(error);
       });
   };
   document.querySelector("#traceList").innerHTML = "";
   const savedUrls = localStorage.getItem(KEY_URLS);
-  const searchUrls = savedUrls != null ? savedUrls.split(",").filter(url => url.includes("http")) : [];
-  const hits = await Promise.all(searchUrls.map(url => search(url)));
-  const filteredHits = hits.filter(x => Boolean(x) && x.length);
+  const searchUrls = savedUrls != null ? savedUrls.split(",").filter((url) => url.includes("http")) : [];
+  const hits = await Promise.all(searchUrls.map((url) => search(url)));
+  const filteredHits = hits.filter((x) => Boolean(x) && x.length);
   filteredHits
     .flat()
     .sort((a, b) => (a._source["@timestamp"] > b._source["@timestamp"] ? 1 : -1))
-    .forEach(hit => {
+    .forEach((hit) => {
       const source = hit._source;
       const applicationName = source.application || "no application";
       const anchorEl = document.createElement("a");
       anchorEl.classList.add("list-group-item");
       anchorEl.href = "#";
-      anchorEl.onclick = function(e) {
+      anchorEl.onclick = function (e) {
         e.preventDefault();
-        const jsonMessage = Object.keys(source).find(key => key.includes("msg"));
+        const jsonMessage = Object.keys(source).find((key) => key.includes("msg"));
         let message = jsonMessage ? { ...source, message: JSON.parse(source[jsonMessage]) } : source;
 
         traceSourceCodeMirror.setValue(JSON.stringify(message, null, 2));
@@ -98,14 +98,14 @@ const searchKibana = async transactionId => {
       console.log(hit._source);
     });
 };
-(function() {
+(function () {
   createNetworkListener();
   responseCodeMirror = CodeMirror(document.getElementById("response"), {
     mode: "javascript",
     lineNumbers: true,
     lineWrapping: true,
     foldGutter: true,
-    gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+    gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
   });
   variablesCodeMirror = CodeMirror(document.getElementById("variables"), {
     mode: "javascript",
@@ -113,7 +113,7 @@ const searchKibana = async transactionId => {
     lineNumbers: true,
     readOnly: true,
     foldGutter: true,
-    gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+    gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
   });
   queryCodeMirror = CodeMirror(document.getElementById("query"), {
     mode: "javascript",
@@ -121,7 +121,7 @@ const searchKibana = async transactionId => {
     lineNumbers: true,
     readOnly: true,
     foldGutter: true,
-    gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+    gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
   });
   traceSourceCodeMirror = CodeMirror(document.getElementById("traceSource"), {
     mode: "javascript",
@@ -129,12 +129,12 @@ const searchKibana = async transactionId => {
     lineNumbers: true,
     readOnly: true,
     foldGutter: true,
-    gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
+    gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"],
   });
-  document.addEventListener("click", function(e) {
+  document.addEventListener("click", function (e) {
     if (e.target && e.target.parentElement && e.target.parentElement.id === "requestList" && e.target.tagName === "A") {
       const requestList = document.querySelectorAll("#requestList a");
-      requestList.forEach(anchor => {
+      requestList.forEach((anchor) => {
         anchor.classList.remove("active");
       });
       e.target.classList.add("active");
@@ -171,7 +171,7 @@ const searchKibana = async transactionId => {
       }
     }
   });
-  $('a[data-toggle="tab"]').on("shown.bs.tab", async function(e) {
+  $('a[data-toggle="tab"]').on("shown.bs.tab", async function (e) {
     // refresh b/c hidden codeMirrors is not updating until invoked
     variablesCodeMirror.refresh();
     responseCodeMirror.refresh();
@@ -228,7 +228,7 @@ const searchKibana = async transactionId => {
     },
     false
   );
-  document.getElementById("requestListContainer").addEventListener("keydown", function(event) {
+  document.getElementById("requestListContainer").addEventListener("keydown", function (event) {
     event.preventDefault();
     const clickFirst = () => {
       const allReq = document.querySelectorAll("#requestList li");
@@ -272,39 +272,56 @@ function setDataInDetailsView(query, variables, response) {
 }
 
 function createNetworkListener() {
-  browser.devtools.network.onRequestFinished.addListener(event => {
-    event.getContent(body => {
+  browser.devtools.network.onRequestFinished.addListener((event) => {
+    event.getContent((body) => {
       if (event.request && event.request.url) {
+        console.log("event.request");
         if (event.request.url.includes("graphql") && event.request.method === "POST") {
           let operationName, query, variables;
-          if (event.request.postData.params == null || event.request.postData.params.length === 0) {
+          if (event.request.postData.params != null && event.request.postData.params.length) {
+            operationName = event.request.postData.params.find((x) => x.name === "operationName").value;
+            query = event.request.postData.params.find((x) => x.name === "query").value;
+            variables = event.request.postData.params.find((x) => x.name === "variables").value;
+          } else {
             // Firefox does not parse the multipart body like chrome, need to do it manually
             const rawData = event.request.postData.text.split(event.request.postData.mimeType.split("boundary=")[1]);
-            operationName = rawData[1]
-              .replace('Content-Disposition: form-data; name="operationName"', "")
-              .replace("--", "")
-              .trim();
-            query = rawData[2]
-              .replace('Content-Disposition: form-data; name="query"', "")
-              .replace("--", "")
-              .trim();
-            variables = rawData[3]
-              .replace('Content-Disposition: form-data; name="variables"', "")
-              .replace("--", "")
-              .trim();
-            if (operationName == null) {
-              return;
+            if (rawData.length === 1) {
+              const parsed = JSON.parse(rawData);
+              query = parsed.query;
+              variables = JSON.stringify(parsed.variables);
+
+              // split query on space
+              const splitOnSpace = query.split(" ")
+              const type = splitOnSpace[0]
+              if(type.toLowerCase() != "mutation" && type.toLowerCase() != "query"){
+
+                // return first that is not whitespace or '{'
+                const queryName = splitOnSpace.find(x => x.trim() != '{');
+                operationName = queryName
+              }else{
+                const name = splitOnSpace[1].split('(')[0]
+                operationName = `${type}: ${name}`;
+              }
+            } else {
+              operationName = rawData[1]
+                .replace('Content-Disposition: form-data; name="operationName"', "")
+                .replace("--", "")
+                .trim();
+              query = rawData[2].replace('Content-Disposition: form-data; name="query"', "").replace("--", "").trim();
+              variables = rawData[3]
+                .replace('Content-Disposition: form-data; name="variables"', "")
+                .replace("--", "")
+                .trim();
+              if (operationName == null) {
+                return;
+              }
             }
-          } else {
-            operationName = event.request.postData.params.find(x => x.name === "operationName").value;
-            query = event.request.postData.params.find(x => x.name === "query").value;
-            variables = event.request.postData.params.find(x => x.name === "variables").value;
           }
 
           const anchorEl = document.createElement("a");
           anchorEl.classList.add("list-group-item");
           anchorEl.href = "#";
-          anchorEl.onclick = function(e) {
+          anchorEl.onclick = function (e) {
             e.preventDefault();
             setDataInDetailsView(query, variables, body);
           };
@@ -312,7 +329,7 @@ function createNetworkListener() {
           anchorEl.appendChild(operationNameValue);
           document.querySelector("#requestList").prepend(anchorEl);
 
-          const transactionId = event.request.headers.find(x => x.name === "x-dooer-transaction-id");
+          const transactionId = event.request.headers.find((x) => x.name === "x-dooer-transaction-id");
           if (transactionId) {
             traceList.push(transactionId.value);
           }
