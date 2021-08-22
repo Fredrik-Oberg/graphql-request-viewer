@@ -2,4 +2,6 @@
 
 # How to install
 
-- Chrome: https://developer.chrome.com/extensions/getstarted#manifest (Load unpacked section)
+- Download and unpack zip from releases.
+- Load unpacked extension, point to unpacked folder.
+- https://developer.chrome.com/extensions/getstarted#manifest (Load unpacked section)
