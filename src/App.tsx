@@ -33,17 +33,20 @@ function App() {
   useStyles();
   const [requests, setRequests] = React.useState<ParsedRequest[]>([]);
   const [selectedRequest, setSelectedRequest] = React.useState<ParsedRequest | null>(null);
+
   React.useEffect(() => {
-    chrome.devtools.network.onRequestFinished.addListener((req) => {
-      req.getContent((response) => {
-        if (isGraphQLRequest(req.request)) {
+    const eventListener = (req: chrome.devtools.network.Request) => {
+      if (isGraphQLRequest(req.request)) {
+        req.getContent((response) => {
           const parsed = parseRequest(req.request, response);
           if (parsed) {
             setRequests([parsed, ...requests]);
           }
-        }
-      });
-    });
+        });
+      }
+    };
+    chrome.devtools.network.onRequestFinished.addListener(eventListener);
+    return () => chrome.devtools.network.onRequestFinished.removeListener(eventListener);
   }, [requests, setRequests]);
   const clearRequests = () => {
     setRequests([]);

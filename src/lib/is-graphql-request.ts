@@ -7,7 +7,7 @@ export default function isGraphQLRequest(request: Request) {
   try {
     postData = JSON.parse(request.postData.text);
   } catch (ex) {
-    console.error("Could not parse postData", request.postData.text);
+    console.debug("Could not parse postData for", request.url);
     return false;
   }
   if (!postData.query) return false;
